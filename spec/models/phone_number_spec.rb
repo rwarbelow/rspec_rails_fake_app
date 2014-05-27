@@ -15,4 +15,8 @@ describe PhoneNumber do
   	phone_number.person_id = nil
   	expect(phone_number).to_not be_valid
   end
+
+  it 'is associated with a person' do
+  	expect(phone_number).to respond_to(:person)
+  end
 end

@@ -1,4 +1,6 @@
 RspecRailsFakeApp::Application.routes.draw do
+  resources :email_addresses
+
   resources :phone_numbers
 
   resources :people

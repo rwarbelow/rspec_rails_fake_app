@@ -70,23 +70,23 @@ describe PhoneNumbersController do
       it "creates a new PhoneNumber" do
         expect {
           post :create, {:phone_number => valid_attributes}, valid_session
-        }.to change(PhoneNumber, :count).by(1)
+          }.to change(PhoneNumber, :count).by(1)
+        end
+
+        it "assigns a newly created phone_number as @phone_number" do
+          post :create, {:phone_number => valid_attributes}, valid_session
+          assigns(:phone_number).should be_a(PhoneNumber)
+          assigns(:phone_number).should be_persisted
+        end
+
+        it "redirects to the phone number's person" do
+          post :create, {:phone_number => valid_attributes}, valid_session
+          response.should redirect_to(alice)
+        end
       end
 
-      it "assigns a newly created phone_number as @phone_number" do
-        post :create, {:phone_number => valid_attributes}, valid_session
-        assigns(:phone_number).should be_a(PhoneNumber)
-        assigns(:phone_number).should be_persisted
-      end
-
-      it "redirects to the phone number's person" do
-        post :create, {:phone_number => valid_attributes}, valid_session
-        response.should redirect_to(alice)
-      end
-    end
-
-    describe "with invalid params" do
-      it "assigns a newly created but unsaved phone_number as @phone_number" do
+      describe "with invalid params" do
+        it "assigns a newly created but unsaved phone_number as @phone_number" do
         # Trigger the behavior that occurs when invalid params are submitted
         PhoneNumber.any_instance.stub(:save).and_return(false)
         post :create, {:phone_number => { "number" => "invalid value" }}, valid_session
@@ -150,18 +150,21 @@ describe PhoneNumbersController do
   end
 
   describe "DELETE destroy" do
+    let(:bob) { Person.create(first_name: "Bob", last_name: "Johnson") }
+    let(:valid_attributes) { { number: '3332222', person_id: bob.id } }
+
     it "destroys the requested phone_number" do
       phone_number = PhoneNumber.create! valid_attributes
       expect {
         delete :destroy, {:id => phone_number.to_param}, valid_session
-      }.to change(PhoneNumber, :count).by(-1)
+        }.to change(PhoneNumber, :count).by(-1)
+      end
+
+      it "redirects to the phone_numbers list" do
+        phone_number = PhoneNumber.create! valid_attributes
+        delete :destroy, {:id => phone_number.to_param}, valid_session
+        response.should redirect_to(bob)
+      end
     end
 
-    it "redirects to the phone_numbers list" do
-      phone_number = PhoneNumber.create! valid_attributes
-      delete :destroy, {:id => phone_number.to_param}, valid_session
-      response.should redirect_to(phone_numbers_url)
-    end
   end
-
-end
